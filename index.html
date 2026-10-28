@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>东北林业大学辩论队履历统计系统</title>
+  <link rel="stylesheet" href="style.css?v=match-details-1" />
+</head>
+<body>
+  <header class="topbar">
+    <button id="toggleSidebar" class="toggle-btn" title="折叠/展开侧边栏" aria-label="折叠或展开侧边栏" aria-controls="sidebar" aria-expanded="true">
+      <span class="hamburger"></span>
+    </button>
+    <h1 class="topbar-title">东北林业大学辩论队履历统计系统</h1>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-heading">
+        <span class="sidebar-caption">东北林业大学</span>
+        <strong>辩论队档案</strong>
+      </div>
+      <nav class="menu" aria-label="主要导航">
+        <a href="#home" class="menu-item active" data-page="home" aria-current="page">
+          <span class="menu-text">主页</span>
+        </a>
+        <a href="#tournament" class="menu-item" data-page="tournament">
+          <span class="menu-text">赛事统计</span>
+        </a>
+        <a href="#resume" class="menu-item" data-page="resume">
+          <span class="menu-text">履历统计</span>
+        </a>
+        <a href="#users" id="userManagementMenu" class="menu-item" data-page="users" hidden>
+          <span class="menu-text">用户权限管理</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="card account-card" aria-label="用户登录">
+        <details id="adminPanel">
+          <summary>账号登录 / 注册<span class="account-hint">查看无需登录，操作内容请先登录</span></summary>
+          <form id="adminForm" class="form admin-form">
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="adminUsername">用户名</label>
+                <input type="text" id="adminUsername" autocomplete="username" autocapitalize="characters" spellcheck="false" required />
+              </div>
+              <div class="form-row">
+                <label for="adminPassword">密码</label>
+                <input type="password" id="adminPassword" autocomplete="current-password" required />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">登录</button>
+            </div>
+          </form>
+          <button type="button" id="adminLogout" class="btn-outline admin-form" hidden>退出登录</button>
+          <p id="adminStatus" class="status admin-form" role="status" aria-live="polite"></p>
+        </details>
+      </section>
+      <dialog id="registerDialog">
+        <form id="registerForm" class="form">
+          <h2>首次注册：确认密码</h2>
+          <p id="registerUsername"></p>
+          <div class="form-row">
+            <label for="confirmPassword">再次输入密码</label>
+            <input type="password" id="confirmPassword" autocomplete="new-password" minlength="6" required />
+          </div>
+          <p id="registerStatus" class="status" role="status" aria-live="polite"></p>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">确认并注册</button>
+            <button type="button" id="cancelRegister" class="btn-outline">取消</button>
+          </div>
+        </form>
+      </dialog>
+      <section id="page-home" class="page active" aria-labelledby="home-title">
+        <div class="card home-hero">
+          <div class="section-label">队伍档案 / 首页</div>
+          <h2 id="home-title" class="home-title" tabindex="-1">愿我们都能听见，<br />雪落下的声音。</h2>
+          <button type="button" id="editHomeMessage" class="btn-outline" aria-controls="homeMessageForm" aria-expanded="false">登陆来修改我的首页语</button>
+          <form id="homeMessageForm" class="form home-message-form" hidden>
+            <div class="form-row">
+              <label for="homeMessageInput">我的首页语</label>
+              <textarea id="homeMessageInput" rows="3" maxlength="120" required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="saveHomeMessage" class="btn-primary">保存</button>
+              <button type="button" id="cancelHomeMessage" class="btn-outline">取消</button>
+            </div>
+          </form>
+          <p id="homeMessageStatus" class="status" role="status" aria-live="polite"></p>
+          <p class="home-description">东北林业大学辩论队履历统计系统。集中整理赛事成绩与个人参赛经历，让队伍的每一段历程都有据可查。</p>
+          <div class="home-hero-footer">
+            <span>赛事记录 · 个人履历 · 统一管理</span>
+            <span id="home-access" role="status" aria-live="polite">当前可查看全部公开记录</span>
+          </div>
+        </div>
+        <div class="overview-grid" aria-label="数据概览" aria-live="polite">
+          <div class="card overview-card">
+            <span class="section-label">赛事档案</span>
+            <p class="overview-value"><strong id="home-tournaments">--</strong><span>场赛事</span></p>
+            <p class="overview-description">已提交的赛事与成绩</p>
+          </div>
+          <div class="card overview-card">
+            <span class="section-label">个人履历</span>
+            <p class="overview-value"><strong id="home-resumes">--</strong><span>份履历</span></p>
+            <p class="overview-description">按姓名与年级整理的档案</p>
+          </div>
+          <div class="card overview-card">
+            <span class="section-label">参赛经历</span>
+            <p class="overview-value"><strong id="home-records">--</strong><span>条记录</span></p>
+            <p class="overview-description">全部履历中的参赛条目</p>
+          </div>
+        </div>
+        <p id="home-data-status" class="home-data-status" role="status"></p>
+        <div class="home-section-heading">
+          <h2>功能入口</h2>
+          <span>从这里开始查看与整理</span>
+        </div>
+        <div class="entry-grid">
+          <a href="#tournament" class="card entry-card" data-home-page="tournament">
+            <span class="entry-number" aria-hidden="true">01</span>
+            <h3>赛事统计</h3>
+            <p>查看赛事名称、比赛成绩与参赛辩手，登录后可新增或维护赛事记录。</p>
+            <span class="entry-action">进入赛事统计<span aria-hidden="true">→</span></span>
+          </a>
+          <a href="#resume" class="card entry-card" data-home-page="resume">
+            <span class="entry-number" aria-hidden="true">02</span>
+            <h3>履历统计</h3>
+            <p>查阅个人参赛经历与履历情况，按年级和姓名建立完整的个人档案。</p>
+            <span class="entry-action">进入履历统计<span aria-hidden="true">→</span></span>
+          </a>
+        </div>
+        <div class="home-note">
+          <strong>使用说明</strong>
+          <p>未登录也可查看记录。首次登录时，确认密码即可注册；正常登录后可提交、修改和删除全部内容，删除前请仔细核对。</p>
+        </div>
+      </section>
+      <!-- 赛事统计页面 -->
+      <section id="page-tournament" class="page" aria-labelledby="tournament-title">
+        <div class="page-heading">
+          <div class="section-label">队伍档案 / 赛事</div>
+          <h2 id="tournament-title" tabindex="-1">赛事统计</h2>
+        </div>
+        <div class="card">
+          <h2 id="t_form_title" class="card-title">上传新的赛事</h2>
+          <form id="tournamentForm" class="form">
+            <fieldset id="t_fields" disabled>
+            <div class="form-row">
+              <label>赛事名称</label>
+              <input type="text" id="t_name" placeholder="" required />
+            </div>
+            <div class="form-row">
+              <label>赛事整体赛果</label>
+              <div class="select-row">
+                <select id="t_result" required>
+                  <option value="">请选择</option>
+                  <option value="完赛">完赛</option>
+                  <option value="履历">履历</option>
+                  <option value="亚军">亚军</option>
+                  <option value="冠军">冠军</option>
+                  <option value="其他">其他</option>
+                </select>
+                <input
+                  type="text"
+                  id="t_result_other"
+                  placeholder="填写其他赛果"
+                  class="other-input hidden"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="t_debaters">赛事参赛辩手</label>
+              <input
+                type="text"
+                id="t_debaters"
+                placeholder=""
+              />
+            </div>
+            <p class="field-note">总名单可留空，保存时会从各场比赛的选手名单汇总。</p>
+            <div class="table-header-row">
+              <strong>比赛明细</strong>
+              <button type="button" id="addMatchBtn" class="btn-outline btn-add-row" title="添加一场比赛" aria-label="添加一场比赛">+</button>
+            </div>
+            <div id="t_matches" class="match-editor-list"></div>
+            <p id="t_schema_status" class="status" role="status" hidden></p>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">提交赛事</button>
+              <button type="button" id="t_cancel_edit" class="btn-outline" hidden>取消修改</button>
+              <span id="t_status" class="status"></span>
+            </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">赛事列表</h2>
+            <span id="t_count" class="count">共 0 条</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px">#</th>
+                  <th>赛事名称</th>
+                  <th style="width: 120px">赛果</th>
+                  <th>参赛辩手</th>
+                  <th style="width: 160px">上传时间</th>
+                  <th id="t_actions" style="width: 150px" hidden>操作</th>
+                </tr>
+              </thead>
+              <tbody id="t_body">
+                <tr><td colspan="5" class="empty-row">加载中...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="t_delete_status" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- 履历统计页面 -->
+      <section id="page-resume" class="page" aria-labelledby="resume-title">
+        <div class="page-heading">
+          <div class="section-label">队伍档案 / 履历</div>
+          <h2 id="resume-title" tabindex="-1">履历统计</h2>
+        </div>
+        <div class="card">
+          <h2 id="r_form_title" class="card-title">上传我的履历</h2>
+          <form id="resumeForm" class="form">
+            <fieldset id="r_fields" disabled>
+            <div class="form-grid">
+              <div class="form-row">
+                <label>年级</label>
+                <input type="text" id="r_grade" placeholder="" required />
+              </div>
+              <div class="form-row">
+                <label>姓名</label>
+                <input type="text" id="r_name" placeholder="" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="table-header-row">
+                <label>履历记录</label>
+                <button type="button" id="addRowBtn" class="btn-outline btn-add-row" title="添加一行">+</button>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table dynamic-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px">#</th>
+                      <th>赛事名称</th>
+                      <th style="width: 180px">履历情况</th>
+                      <th style="width: 90px">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="r_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">提交履历</button>
+              <button type="button" id="r_cancel_edit" class="btn-outline" hidden>取消修改</button>
+              <span id="r_status" class="status"></span>
+            </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">履历列表</h2>
+            <span id="r_count" class="count">共 0 条</span>
+          </div>
+          <div id="r_list" class="resume-list">
+            <div class="empty-row">加载中...</div>
+          </div>
+          <p id="r_delete_status" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+      <section id="page-users" class="page" hidden aria-labelledby="users-title">
+        <div class="page-heading">
+          <div class="section-label">队伍档案 / 管理</div>
+          <h2 id="users-title" tabindex="-1">用户权限管理</h2>
+          <p>管理普通用户的内容操作权限。</p>
+        </div>
+        <div id="userManagement" class="card" hidden>
+          <h2 class="card-title">用户权限管理</h2>
+          <button type="button" id="refreshUsers" class="btn-outline">刷新用户列表</button>
+          <div id="userList" class="admin-form"></div>
+          <p id="userStatus" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js?v=match-details-1"></script>
+</body>
+</html>
